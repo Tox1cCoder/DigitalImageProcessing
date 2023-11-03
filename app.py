@@ -22,7 +22,7 @@ def lowLight():
             enhance_image(uploaded_image, downloaded_image)
 
             final_image = Image.open(downloaded_image)
-            print("Opening ", final_imageaa)
+            print("Opening ", final_image)
 
             image_comparison(
                 img1=uploaded_image,
