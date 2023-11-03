@@ -23,8 +23,7 @@ def lowLight():
 
             final_image = Image.open(downloaded_image)
             print("Opening ", final_image)
-            # st.markdown("---")
-            # st.image(final_image, caption='Enhanced Image')
+
             image_comparison(
                 img1=uploaded_image,
                 img2=final_image,
