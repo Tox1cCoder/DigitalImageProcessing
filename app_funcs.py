@@ -5,13 +5,13 @@ from huggingface_hub import from_pretrained_keras
 from tensorflow.keras.preprocessing.image import img_to_array
 
 
-@st.cache(persist=True, allow_output_mutation=True, show_spinner=False, suppress_st_warning=True)
+@st.cache_resource(show_spinner=False)
 def instantiate_model():
     model = from_pretrained_keras("keras-io/lowlight-enhance-mirnet", compile=False)
     return model
 
 
-@st.cache(persist=True, allow_output_mutation=True, show_spinner=False, suppress_st_warning=True)
+@st.cache_data(show_spinner=False)
 def enhance_image(uploaded_image, downloaded_image):
     model = instantiate_model()
     low_light_img = Image.open(uploaded_image).convert('RGB')
@@ -32,7 +32,7 @@ def enhance_image(uploaded_image, downloaded_image):
     final_image.save(downloaded_image)
 
 
-@st.cache(persist=True, allow_output_mutation=True, show_spinner=False, suppress_st_warning=True)
+@st.cache_data(show_spinner=False)
 def download_success():
     st.balloons()
     st.success('✅ Download Successful !!')
