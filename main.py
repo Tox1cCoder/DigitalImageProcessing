@@ -17,7 +17,6 @@ def superResolution():
         # You need to implement this part using your VDSR model
         super_res_frame = model.process(frame)  # Replace 'model.process' with your actual VDSR processing code
 
-        # Display the super-resolved frame
         st.image(super_res_frame, channels="BGR")
 
     video_capture.release()
