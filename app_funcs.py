@@ -10,7 +10,7 @@ def instantiate_model():
     model = from_pretrained_keras("keras-io/lowlight-enhance-mirnet", compile=False)
     return model
 
-d
+
 @st.cache_data(show_spinner=False)
 def enhance_image(uploaded_image, downloaded_image):
     model = instantiate_model()
