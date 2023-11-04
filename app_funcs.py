@@ -5,7 +5,7 @@ from huggingface_hub import from_pretrained_keras
 from tensorflow.keras.preprocessing.image import img_to_array
 
 
-@st.cache_resource(show_spinner=False)s
+@st.cache_resource(show_spinner=False)
 def instantiate_model():
     model = from_pretrained_keras("keras-io/lowlight-enhance-mirnet", compile=False)
     return model
