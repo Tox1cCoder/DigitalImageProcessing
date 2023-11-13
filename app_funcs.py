@@ -2,21 +2,26 @@ import numpy as np
 import streamlit as st
 from PIL import Image
 from huggingface_hub import from_pretrained_keras
+import keras
+import tensorflow as tf
 from tensorflow.keras.preprocessing.image import img_to_array
-
+import joblib
 
 @st.cache_resource(show_spinner=False)
 def instantiate_model():
     model = from_pretrained_keras("keras-io/lowlight-enhance-mirnet", compile=False)
-    return model
 
+    # model = tf.saved_model.load('model/')
+
+    return model
 
 @st.cache_data(show_spinner=False)
 def enhance_image(uploaded_image, downloaded_image):
     model = instantiate_model()
     low_light_img = Image.open(uploaded_image).convert('RGB')
     # width, height = low_light_img.size
-    # low_light_img = low_light_img.resize((256,256),Image.NEAREST)
+    low_light_img = low_light_img.resize((600, 400), Image.NEAREST)
+    print(np.array(low_light_img).shape)
 
     image = img_to_array(low_light_img)
     image = image.astype('float32') / 255.0
@@ -31,8 +36,6 @@ def enhance_image(uploaded_image, downloaded_image):
     final_image = Image.fromarray(output_image.astype('uint8'), 'RGB')
     final_image.save(downloaded_image)
 
-
 @st.cache_data(show_spinner=False)
 def download_success():
-    st.balloons()
     st.success('✅ Download Successful !!')

@@ -1,7 +1,5 @@
 import os
 
-import streamlit as st
-from PIL import Image
 from streamlit_image_comparison import image_comparison
 
 from app_funcs import *
@@ -16,7 +14,7 @@ def lowLight():
         with open(os.path.join(upload_path, uploaded_file.name), "wb") as f:
             f.write((uploaded_file).getbuffer())
 
-        with st.spinner(f"Enhancing... 💫"):
+        with st.spinner(f"Enhancing... "):
             uploaded_image = os.path.abspath(os.path.join(upload_path, uploaded_file.name))
             downloaded_image = os.path.abspath(os.path.join(download_path, str("enhanced_" + uploaded_file.name)))
             enhance_image(uploaded_image, downloaded_image)
@@ -77,11 +75,10 @@ def diffBIR():
 def main():
     st.set_page_config(
         page_title="Image Quality Enhancer",
-        page_icon="✨",
         layout="centered",
         initial_sidebar_state="auto",
     )
-    main_image = Image.open('static/main_banner.png')
+    main_image = Image.open('assets/main_banner.png')
 
     st.image(main_image, use_column_width='auto')
     st.title("Image Quality Enhancer ")
