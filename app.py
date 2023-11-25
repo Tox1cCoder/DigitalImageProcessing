@@ -78,9 +78,7 @@ def main():
         layout="centered",
         initial_sidebar_state="auto",
     )
-    main_image = Image.open('assets/main_banner.png')
 
-    st.image(main_image, use_column_width='auto')
     st.title("Image Quality Enhancer ")
     st.info('Supports all popular image formats - PNG, JPG, BMP')
 
