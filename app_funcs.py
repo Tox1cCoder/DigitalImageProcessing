@@ -3,7 +3,7 @@ import streamlit as st
 from PIL import Image
 from huggingface_hub import from_pretrained_keras
 from tensorflow.keras.preprocessing.image import img_to_array
-
+from helper import *
 
 @st.cache_resource(show_spinner=False)
 def instantiate_model():
@@ -32,6 +32,12 @@ def enhance_image(uploaded_image, downloaded_image):
     output_image = np.uint32(output_image)
     final_image = Image.fromarray(output_image.astype('uint8'), 'RGB')
     final_image.save(downloaded_image)
+
+@st.cache_data(show_spinner=False)
+def supper_resolution(uploaded_image, output_dir="downloads"):
+    model = CustomBSRGAN(model_path='models\BSRGAN.pth', hf_model=False, device="cpu", output_dir=output_dir)
+    rst_image = model.predict(img_path=uploaded_image)
+    return rst_image
 
 
 @st.cache_data(show_spinner=False)
