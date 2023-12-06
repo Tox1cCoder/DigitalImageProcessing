@@ -40,10 +40,10 @@ def lowLight():
         st.warning('⚠ Please upload your Image file')
 
 
-def Super_Resolution():
+def Super_Resolution(method):
     upload_path = "uploads/"
     download_path = "downloads/"
-    uploaded_file = st.file_uploader("Upload Image", type=["png", "jpg", "bmp", "jpeg"])
+    uploaded_file = st.file_uploader("Upload Image", type=["png", "jpg", "bmp", "jpeg"], accept_multiple_files=False)
     
     if uploaded_file is not None:
         with open(os.path.join(upload_path, uploaded_file.name), "wb") as f:
@@ -52,11 +52,12 @@ def Super_Resolution():
         with st.spinner(f"Enhancing... "):
             uploaded_image = os.path.abspath(os.path.join(upload_path, uploaded_file.name))
             downloaded_image = os.path.abspath(os.path.join(download_path, str("enhanced_" + uploaded_file.name)))
-            supper_resolution(uploaded_image)
-
+            if method == "BSRGan":
+                supper_resolution(model_path="models\BSRGAN.pth", uploaded_image=uploaded_image)
+            elif method == "RealESRGAN+":
+                sr_real_esrgan(model_path="models\RealESRGAN_x2plus.pth", input_path=uploaded_image, scale=2)
+            
             print(downloaded_image)
-            
-            
             final_image = Image.open(downloaded_image)
             print("Opening ", final_image)
 
@@ -98,7 +99,8 @@ def main():
         lowLight()
 
     elif choice == "Quality":
-        Super_Resolution()
+        method = st.selectbox("Method",("BSRGan", "RealESRGAN+"))
+        Super_Resolution(method=method)
 
     elif choice == "About":
         print()
