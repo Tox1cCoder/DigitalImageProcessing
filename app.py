@@ -53,9 +53,11 @@ def Super_Resolution(method):
             uploaded_image = os.path.abspath(os.path.join(upload_path, uploaded_file.name))
             downloaded_image = os.path.abspath(os.path.join(download_path, str("enhanced_" + uploaded_file.name)))
             if method == "BSRGan":
-                supper_resolution(model_path="models\BSRGAN.pth", uploaded_image=uploaded_image)
+                # supper_resolution(model_path="models\BSRGAN.pth", uploaded_image=uploaded_image)
+                supper_resolution(model_path="/content/drive/MyDrive/models/BSRGANx2.pth", uploaded_image=uploaded_image)
             elif method == "RealESRGAN+":
-                sr_real_esrgan(model_path="models\RealESRGAN_x2plus.pth", input_path=uploaded_image, scale=2)
+                # sr_real_esrgan(model_path="models\RealESRGAN_x2plus.pth", input_path=uploaded_image, scale=2)
+                sr_real_esrgan(model_path="content/drive/MyDrive/models/RealESRGAN_x2plus.pth", input_path=uploaded_image, scale=2)
             
             print(downloaded_image)
             final_image = Image.open(downloaded_image)
