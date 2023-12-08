@@ -57,7 +57,7 @@ def Super_Resolution(method):
                 supper_resolution(model_path="/content/drive/MyDrive/models/BSRGANx2.pth", uploaded_image=uploaded_image)
             elif method == "RealESRGAN+":
                 # sr_real_esrgan(model_path="models\RealESRGAN_x2plus.pth", input_path=uploaded_image, scale=2)
-                sr_real_esrgan(model_path="content/drive/MyDrive/models/RealESRGAN_x2plus.pth", input_path=uploaded_image, scale=2)
+                sr_real_esrgan(model_path="/content/drive/MyDrive/models/RealESRGAN_x2plus.pth", input_path=uploaded_image, scale=2)
             
             print(downloaded_image)
             final_image = Image.open(downloaded_image)
