@@ -91,9 +91,8 @@ def main():
     )
 
     st.title("Image Quality Enhancer ")
-    st.info('Supports all popular image formats - PNG, JPG, BMP')
 
-    st.title("Select Activity")
+    st.title("Configuration")
     choice = st.selectbox("Menu", (
         "About", "Low Light Processor", "Quality"))
 
