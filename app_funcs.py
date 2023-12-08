@@ -60,7 +60,7 @@ def sr_real_esrgan(model_path, scale, input_path, output_path="downloads"):
     enhancer = RealESRGANer(model_path=model_path, scale=scale, model=model_x4 if scale==4 else model_x2, device=device)
     face_enhancer = GFPGANer(
         # model_path='models\GFPGANv1.3.pth',
-        model_path='m/content/drive/MyDrive/models/GFPGANv1.3.pth',
+        model_path='/content/drive/MyDrive/models/GFPGANv1.3.pth',
         upscale=scale,
         arch='clean',
         channel_multiplier=2,
