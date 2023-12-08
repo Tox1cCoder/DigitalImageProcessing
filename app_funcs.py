@@ -72,7 +72,7 @@ def sr_real_esrgan(model_path, scale, input_path, output_path="downloads"):
     # output, _ = enhancer.enhance(img, outscale=4)
     # the follow is for face enhancement
     _, _, output = face_enhancer.enhance(img, has_aligned=False, only_center_face=False, paste_back=True)
-    cv2.imwrite(f"{output_path}\enhanced_{image_name}", output)
+    cv2.imwrite(f"{output_path}/enhanced_{image_name}", output)
 
 
 @st.cache_data(show_spinner=False)
