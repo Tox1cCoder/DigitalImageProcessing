@@ -26,7 +26,7 @@ def instantiate_model():
 def enhance_image(uploaded_image, downloaded_image):
     model = instantiate_model()
     low_light_img = Image.open(uploaded_image).convert('RGB')
-    # width, height = low_light_img.size
+    input_shape = low_light_img.size
     low_light_img = low_light_img.resize((600, 400), Image.NEAREST)
 
     image = img_to_array(low_light_img)
@@ -40,6 +40,7 @@ def enhance_image(uploaded_image, downloaded_image):
     output_image = output_image.reshape((np.shape(output_image)[0], np.shape(output_image)[1], 3))
     output_image = np.uint32(output_image)
     final_image = Image.fromarray(output_image.astype('uint8'), 'RGB')
+    final_image = final_image.resize(input_shape)
     final_image.save(downloaded_image)
 
 @st.cache_data(show_spinner=False)
