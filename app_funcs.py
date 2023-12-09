@@ -13,9 +13,9 @@ from gfpgan import GFPGANer
 from tensorflow.keras.preprocessing.image import img_to_array
 from helper import *
 
-from basicsr.models import create_model
+from basicsr.models import build_model
 from basicsr.utils import img2tensor as _img2tensor, tensor2img, imwrite
-from basicsr.utils.options import parse
+from basicsr.utils.options import parse_options
 
 @st.cache_resource(show_spinner=False)
 def instantiate_model():
@@ -80,10 +80,10 @@ def sr_real_esrgan(model_path, scale, input_path, output_path="downloads"):
 @st.cache_resource(show_spinner=False)
 def NAFNetBlur(uploaded_image, downloaded_image):
     opt_path = 'options/test/REDS/NAFNet-width64.yml'
-    opt = parse(opt_path, is_train=False)
+    opt = parse_options(opt_path, is_train=False)
     opt['dist'] = False
-    model = create_model(opt)
-
+    model = build_model(opt)
+    
     img = Image.open(uploaded_image).convert('RGB')
     img = img_to_array(img)
 
@@ -91,15 +91,13 @@ def NAFNetBlur(uploaded_image, downloaded_image):
 
     if model.opt['val'].get('grids', False):
         model.grids()
-
     model.test()
 
     if model.opt['val'].get('grids', False):
         model.grids_inverse()
-
     visuals = model.get_current_visuals()
     sr_img = tensor2img([visuals['result']])
-    imwrite(sr_img, downloaded_image)
+    cv2.imwrite(sr_img, downloaded_image)
 
 @st.cache_data(show_spinner=False)
 def download_success():
