@@ -34,7 +34,7 @@ network_g:
 
 # path
 path:
-  pretrain_network_g: /content/drive/MyDrive/models/NAFNet-SSID-width64.pth
+  pretrain_network_g: /content/drive/MyDrive/models/NAFNet-SIDD-width64.pth
   strict_load_g: true
   resume_state: ~
 
