@@ -3,7 +3,7 @@ from streamlit_image_comparison import image_comparison
 from app_funcs import *
 
 
-def lowLight():
+def Image_Restoration(method):
     upload_path = "uploads/"
     download_path = "downloads/"
     uploaded_file = st.file_uploader("Upload Image", type=["png", "jpg", "bmp", "jpeg"])
@@ -15,7 +15,11 @@ def lowLight():
         with st.spinner(f"Enhancing... "):
             uploaded_image = os.path.abspath(os.path.join(upload_path, uploaded_file.name))
             downloaded_image = os.path.abspath(os.path.join(download_path, str("enhanced_" + uploaded_file.name)))
-            enhance_image(uploaded_image, downloaded_image)
+            
+            if method == "Low Light":
+                enhance_image(uploaded_image, downloaded_image)
+            elif method == "Blurry":
+                NAFNetBlur(uploaded_image, downloaded_image)
 
             final_image = Image.open(downloaded_image)
             print("Opening ", final_image)
@@ -94,12 +98,13 @@ def main():
 
     st.title("Configuration")
     choice = st.selectbox("Menu", (
-        "About", "Low Light Processor", "Quality"))
+        "About", "Image Restoration", "Quality Enhancment"))
 
-    if choice == "Low Light Processor":
-        lowLight()
+    if choice == "Image Restoration":
+        method = st.selectbox("Method", ("Low Light", "Blury"))
+        Image_Restoration(method=method)
 
-    elif choice == "Quality":
+    elif choice == "Quality Enhancment":
         method = st.selectbox("Method",("BSRGan", "RealESRGAN+"))
         Super_Resolution(method=method)
 
