@@ -101,7 +101,7 @@ def main():
         "About", "Image Restoration", "Quality Enhancment"))
 
     if choice == "Image Restoration":
-        method = st.selectbox("Method", ("Low Light", "Blury"))
+        method = st.selectbox("Method", ("Low Light", "Blurry"))
         Image_Restoration(method=method)
 
     elif choice == "Quality Enhancment":
