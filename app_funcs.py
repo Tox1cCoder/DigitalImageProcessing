@@ -13,10 +13,12 @@ from gfpgan import GFPGANer
 from tensorflow.keras.preprocessing.image import img_to_array
 from helper import *
 
+from basicsr.models import create_model
+from basicsr.utils import img2tensor as _img2tensor, tensor2img, imwrite
+from basicsr.utils.options import parse
 
 @st.cache_resource(show_spinner=False)
 def instantiate_model():
-    # model = tf.saved_model.load('MIRNet/')
     model = from_pretrained_keras("keras-io/lowlight-enhance-mirnet", compile=False)
 
     return model
@@ -71,10 +73,33 @@ def sr_real_esrgan(model_path, scale, input_path, output_path="downloads"):
     image_name=os.path.basename(input_path)
     img = cv2.imread(input_path, cv2.IMREAD_UNCHANGED)
     # output, _ = enhancer.enhance(img, outscale=4)
-    # the follow is for face enhancement
     _, _, output = face_enhancer.enhance(img, has_aligned=False, only_center_face=False, paste_back=True)
     cv2.imwrite(f"{output_path}/enhanced_{image_name}", output)
 
+
+@st.cache_resource(show_spinner=False)
+def NAFNetBlur(uploaded_image, downloaded_image):
+    opt_path = 'options/test/REDS/NAFNet-width64.yml'
+    opt = parse(opt_path, is_train=False)
+    opt['dist'] = False
+    model = create_model(opt)
+
+    img = Image.open(uploaded_image).convert('RGB')
+    img = img_to_array(img)
+
+    model.feed_data(data={'lq': img.unsqueeze(dim=0)})
+
+    if model.opt['val'].get('grids', False):
+        model.grids()
+
+    model.test()
+
+    if model.opt['val'].get('grids', False):
+        model.grids_inverse()
+
+    visuals = model.get_current_visuals()
+    sr_img = tensor2img([visuals['result']])
+    imwrite(sr_img, downloaded_image)
 
 @st.cache_data(show_spinner=False)
 def download_success():
