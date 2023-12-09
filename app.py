@@ -19,7 +19,9 @@ def Image_Restoration(method):
             if method == "Low Light":
                 enhance_image(uploaded_image, downloaded_image)
             elif method == "Blurry":
-                NAFNetBlur(uploaded_image, downloaded_image)
+                NAFNetBlur(uploaded_image)
+            elif method == "Denoise":
+                NAFNetNoise(uploaded_image)
 
             final_image = Image.open(downloaded_image)
             print("Opening ", final_image)
@@ -101,11 +103,11 @@ def main():
         "About", "Image Restoration", "Quality Enhancment"))
 
     if choice == "Image Restoration":
-        method = st.selectbox("Method", ("Low Light", "Blurry"))
+        method = st.selectbox("Method", ("Low Light", "Blurry", "Denoise"))
         Image_Restoration(method=method)
 
     elif choice == "Quality Enhancment":
-        method = st.selectbox("Method",("BSRGan", "RealESRGAN+"))
+        method = st.selectbox("Method", ("BSRGan", "RealESRGAN+"))
         Super_Resolution(method=method)
 
     elif choice == "About":

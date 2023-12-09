@@ -13,9 +13,9 @@ from gfpgan import GFPGANer
 from tensorflow.keras.preprocessing.image import img_to_array
 from helper import *
 
-from basicsr.models import build_model
-from basicsr.utils import img2tensor as _img2tensor, tensor2img, imwrite
-from basicsr.utils.options import parse_options
+from nafnet.models import create_model
+from nafnet.utils import img2tensor as _img2tensor, tensor2img, imwrite
+from nafnet.utils.options import parse
 
 @st.cache_resource(show_spinner=False)
 def instantiate_model():
@@ -76,16 +76,27 @@ def sr_real_esrgan(model_path, scale, input_path, output_path="downloads"):
     _, _, output = face_enhancer.enhance(img, has_aligned=False, only_center_face=False, paste_back=True)
     cv2.imwrite(f"{output_path}/enhanced_{image_name}", output)
 
+@st.cache_data(show_spinner=False)
+def imread(img_path):
+  img = cv2.imread(img_path)
+  img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+  return img
+
+@st.cache_data(show_spinner=False)
+def img2tensor(img, bgr2rgb=False, float32=True):
+    img = img.astype(np.float32) / 255.
+    return _img2tensor(img, bgr2rgb=bgr2rgb, float32=float32)
 
 @st.cache_resource(show_spinner=False)
-def NAFNetBlur(uploaded_image, downloaded_image):
+def NAFNetBlur(uploaded_image, output_path="downloads"):
     opt_path = 'options/test/REDS/NAFNet-width64.yml'
-    opt = parse_options(opt_path, is_train=False)
+    opt = parse(opt_path, is_train=False)
     opt['dist'] = False
-    model = build_model(opt)
+    model = create_model(opt)
     
-    img = Image.open(uploaded_image).convert('RGB')
-    img = img_to_array(img)
+    image_name = os.path.basename(uploaded_image)
+    img_input = imread(uploaded_image)
+    img = img2tensor(img_input)
 
     model.feed_data(data={'lq': img.unsqueeze(dim=0)})
 
@@ -96,8 +107,31 @@ def NAFNetBlur(uploaded_image, downloaded_image):
     if model.opt['val'].get('grids', False):
         model.grids_inverse()
     visuals = model.get_current_visuals()
-    sr_img = tensor2img([visuals['result']])
-    cv2.imwrite(sr_img, downloaded_image)
+    output = tensor2img([visuals['result']])
+    cv2.imwrite(f"{output_path}/enhanced_{image_name}", output)
+
+@st.cache_resource(show_spinner=False)
+def NAFNetNoise(uploaded_image, output_path="downloads"):
+    opt_path = 'options/test/SIDD/NAFNet-width64.yml'
+    opt = parse(opt_path, is_train=False)
+    opt['dist'] = False
+    model = create_model(opt)
+    
+    image_name = os.path.basename(uploaded_image)
+    img_input = imread(uploaded_image)
+    img = img2tensor(img_input)
+
+    model.feed_data(data={'lq': img.unsqueeze(dim=0)})
+
+    if model.opt['val'].get('grids', False):
+        model.grids()
+    model.test()
+
+    if model.opt['val'].get('grids', False):
+        model.grids_inverse()
+    visuals = model.get_current_visuals()
+    output = tensor2img([visuals['result']])
+    cv2.imwrite(f"{output_path}/enhanced_{image_name}", output)
 
 @st.cache_data(show_spinner=False)
 def download_success():
