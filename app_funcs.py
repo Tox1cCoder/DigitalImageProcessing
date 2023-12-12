@@ -46,7 +46,7 @@ def enhance_image(uploaded_image, downloaded_image):
     final_image.save(downloaded_image)
 
 @st.cache_data(show_spinner=False)
-def supper_resolution(model_path, uploaded_image, output_dir="downloads"):
+def super_resolution(model_path, uploaded_image, output_dir="downloads"):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model = CustomBSRGAN(model_path=model_path, hf_model=False, device=device, output_dir=output_dir)
     rst_image = model.predict(img_path=uploaded_image)
