@@ -59,8 +59,8 @@ def Super_Resolution(method):
             uploaded_image = os.path.abspath(os.path.join(upload_path, uploaded_file.name))
             downloaded_image = os.path.abspath(os.path.join(download_path, str("enhanced_" + uploaded_file.name)))
             if method == "BSRGan":
-                # supper_resolution(model_path="models\BSRGAN.pth", uploaded_image=uploaded_image)
-                supper_resolution(model_path="/content/drive/MyDrive/models/BSRGANx2.pth", uploaded_image=uploaded_image)
+                # super_resolution(model_path="models\BSRGAN.pth", uploaded_image=uploaded_image)
+                super_resolution(model_path="/content/drive/MyDrive/models/BSRGANx2.pth", uploaded_image=uploaded_image)
             elif method == "RealESRGAN+":
                 # sr_real_esrgan(model_path="models\RealESRGAN_x2plus.pth", input_path=uploaded_image, scale=2)
                 sr_real_esrgan(model_path="/content/drive/MyDrive/models/RealESRGAN_x4plus.pth", input_path=uploaded_image, scale=4)
@@ -100,13 +100,13 @@ def main():
 
     st.title("Configuration")
     choice = st.selectbox("Menu", (
-        "About", "Image Restoration", "Quality Enhancment"))
+        "About", "Image Restoration", "Quality Enhancement"))
 
     if choice == "Image Restoration":
         method = st.selectbox("Method", ("Low Light", "Blurry", "Denoise"))
         Image_Restoration(method=method)
 
-    elif choice == "Quality Enhancment":
+    elif choice == "Quality Enhancement":
         method = st.selectbox("Method", ("BSRGan", "RealESRGAN+"))
         Super_Resolution(method=method)
 
