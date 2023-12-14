@@ -63,7 +63,7 @@ def Super_Resolution(method):
         downloaded_image = os.path.abspath(os.path.join(download_path, str("enhanced_" + uploaded_file.name)))
         
         if method == "BSRGan":
-            types = st.selectbox("Types:", ("Scale x1", "Scale x2"))
+            types = st.selectbox("Types:", ("Scale x2", "Scale x4"))
             if st.button("Process"):
                 with st.spinner(f"Enhancing... "):
                     super_resolution(uploaded_image=uploaded_image, types=types)
