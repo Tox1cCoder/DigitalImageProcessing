@@ -53,7 +53,7 @@ def super_resolution(uploaded_image, types, output_dir="downloads"):
                              hf_model=False, device=device, output_dir=output_dir)
         rst_image = model.predict(img_path=uploaded_image)
         return rst_image
-    elif types=="Scale x1":
+    elif types=="Scale x4":
         model = CustomBSRGAN(model_path="/content/drive/MyDrive/models/BSRGAN.pth",
                              hf_model=False, device=device, output_dir=output_dir)
         rst_image = model.predict(img_path=uploaded_image)
