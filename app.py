@@ -69,6 +69,22 @@ def Super_Resolution(method):
                     super_resolution(uploaded_image=uploaded_image, types=types)
                     torch.cuda.empty_cache()
 
+                image_comparison(
+                    img1=uploaded_image,
+                    img2=downloaded_image,
+                    label1="Original",
+                    label2="Enhanced",
+                )
+                file_extension = uploaded_file.name.split(".")[-1]
+                with open(downloaded_image, "rb") as file:
+                    if st.download_button(
+                            label="Download Enhanced Image",
+                            data=file,
+                            file_name=str("enhanced_" + uploaded_file.name),
+                            mime=f'image/{file_extension}'
+                    ):
+                        download_success()
+
         elif method=="RealESRGAN+":
             types = st.selectbox("Types:", ("Scale x2", "Scale x4", "Anime x4"))
             face =st.checkbox("Face enhance")
@@ -77,25 +93,21 @@ def Super_Resolution(method):
                     sr_real_esrgan(input_path=uploaded_image, scale=4, types=types, face_enhance=face)
                     torch.cuda.empty_cache()
 
-            # print(downloaded_image)
-            # final_image = Image.open(downloaded_image)
-            # print("Opening ", final_image)
-
-        image_comparison(
-            img1=uploaded_image,
-            img2=downloaded_image,
-            label1="Original",
-            label2="Enhanced",
-        )
-        file_extension = uploaded_file.name.split(".")[-1]
-        with open(downloaded_image, "rb") as file:
-            if st.download_button(
-                    label="Download Enhanced Image",
-                    data=file,
-                    file_name=str("enhanced_" + uploaded_file.name),
-                    mime=f'image/{file_extension}'
-            ):
-                download_success()
+                image_comparison(
+                    img1=uploaded_image,
+                    img2=downloaded_image,
+                    label1="Original",
+                    label2="Enhanced",
+                )
+                file_extension = uploaded_file.name.split(".")[-1]
+                with open(downloaded_image, "rb") as file:
+                    if st.download_button(
+                            label="Download Enhanced Image",
+                            data=file,
+                            file_name=str("enhanced_" + uploaded_file.name),
+                            mime=f'image/{file_extension}'
+                    ):
+                        download_success()
 
     else:
         st.warning('⚠ Please upload your Image file')
