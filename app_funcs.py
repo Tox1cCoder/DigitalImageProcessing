@@ -12,12 +12,12 @@ from basicsr.archs.rrdbnet_arch import RRDBNet
 from gfpgan import GFPGANer
 from tensorflow.keras.preprocessing.image import img_to_array
 from helper import *
-
+import gc
 from nafnet.models import create_model
 from nafnet.utils import img2tensor as _img2tensor, tensor2img, imwrite
 from nafnet.utils.options import parse
 
-@st.cache_resource(show_spinner=False)
+@st.cache_data(show_spinner=False)
 def instantiate_model():
     model = from_pretrained_keras("keras-io/lowlight-enhance-mirnet", compile=False)
 
@@ -46,21 +46,41 @@ def enhance_image(uploaded_image, downloaded_image):
     final_image.save(downloaded_image)
 
 @st.cache_data(show_spinner=False)
-def super_resolution(model_path, uploaded_image, output_dir="downloads"):
+def super_resolution(uploaded_image, types, output_dir="downloads"):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    model = CustomBSRGAN(model_path=model_path, hf_model=False, device=device, output_dir=output_dir)
-    rst_image = model.predict(img_path=uploaded_image)
-    return rst_image
+    if types=="Scale x2":
+        model = CustomBSRGAN(model_path="/content/drive/MyDrive/models/BSRGANx2.pth",
+                             hf_model=False, device=device, output_dir=output_dir)
+        rst_image = model.predict(img_path=uploaded_image)
+        return rst_image
+    elif types=="Scale x1":
+        model = CustomBSRGAN(model_path="/content/drive/MyDrive/models/BSRGAN.pth",
+                             hf_model=False, device=device, output_dir=output_dir)
+        rst_image = model.predict(img_path=uploaded_image)
+        return rst_image
+
 
 @st.cache_data(show_spinner=False)
-def sr_real_esrgan(model_path, scale, input_path, output_path="downloads"):
+def sr_real_esrgan(scale, input_path, types, face_enhance, output_path="downloads"):
     assert scale == 2 or scale ==4, "sclace only equal 2 or 4"
     
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    
-    model_x4 = RRDBNet(num_in_ch=3, num_out_ch=3, num_feat=64, num_block=23, num_grow_ch=32, scale=4)
-    model_x2 = RRDBNet(num_in_ch=3, num_out_ch=3, num_feat=64, num_block=23, num_grow_ch=32, scale=2)
-    enhancer = RealESRGANer(model_path=model_path, scale=scale, model=model_x4 if scale==4 else model_x2, device=device)
+    model_path=""
+    scale = 2
+    if types == "Scale x2":
+        scale = 2
+        model_path="/content/drive/MyDrive/models/RealESRGAN_x2plus.pth"
+        model = RRDBNet(num_in_ch=3, num_out_ch=3, num_feat=64, num_block=23, num_grow_ch=32, scale=2)
+    elif types == "Scale x4":
+        scale = 4
+        model_path = "/content/drive/MyDrive/models/RealESRGAN_x4plus.pth"
+        model = RRDBNet(num_in_ch=3, num_out_ch=3, num_feat=64, num_block=23, num_grow_ch=32, scale=4)
+    elif types == "Anime x4":
+        scale = 4
+        model_path = "/content/drive/MyDrive/models/RealESRGAN_x4plus_anime_6B.pth"
+        model = RRDBNet(num_in_ch=3, num_out_ch=3, num_feat=64, num_block=6, num_grow_ch=32, scale=4)
+    enhancer = RealESRGANer(model_path=model_path, scale=scale, model=model, device=device)
+
     face_enhancer = GFPGANer(
         # model_path='models\GFPGANv1.3.pth',
         model_path='/content/drive/MyDrive/models/GFPGANv1.3.pth',
@@ -72,9 +92,14 @@ def sr_real_esrgan(model_path, scale, input_path, output_path="downloads"):
 
     image_name=os.path.basename(input_path)
     img = cv2.imread(input_path, cv2.IMREAD_UNCHANGED)
-    # output, _ = enhancer.enhance(img, outscale=4)
-    _, _, output = face_enhancer.enhance(img, has_aligned=False, only_center_face=False, paste_back=True)
-    cv2.imwrite(f"{output_path}/enhanced_{image_name}", output)
+    if face_enhance:
+        _, _, output = face_enhancer.enhance(img, has_aligned=False, only_center_face=False, paste_back=True)
+        cv2.imwrite(f"{output_path}/enhanced_{image_name}", output)
+    else:   
+        output, _ = enhancer.enhance(img, outscale=4)
+        cv2.imwrite(f"{output_path}/enhanced_{image_name}", output)
+
+    
 
 @st.cache_data(show_spinner=False)
 def imread(img_path):
@@ -87,7 +112,7 @@ def img2tensor(img, bgr2rgb=False, float32=True):
     img = img.astype(np.float32) / 255.
     return _img2tensor(img, bgr2rgb=bgr2rgb, float32=float32)
 
-@st.cache_resource(show_spinner=False)
+@st.cache_data(show_spinner=False)
 def NAFNetBlur(uploaded_image, output_path="downloads"):
     opt_path = 'options/test/REDS/NAFNet-width64.yml'
     opt = parse(opt_path, is_train=False)
@@ -110,7 +135,7 @@ def NAFNetBlur(uploaded_image, output_path="downloads"):
     output = tensor2img([visuals['result']])
     cv2.imwrite(f"{output_path}/enhanced_{image_name}", output)
 
-@st.cache_resource(show_spinner=False)
+@st.cache_data(show_spinner=False)
 def NAFNetNoise(uploaded_image, output_path="downloads"):
     opt_path = 'options/test/SIDD/NAFNet-width64.yml'
     opt = parse(opt_path, is_train=False)
@@ -132,7 +157,6 @@ def NAFNetNoise(uploaded_image, output_path="downloads"):
     visuals = model.get_current_visuals()
     output = tensor2img([visuals['result']])
     cv2.imwrite(f"{output_path}/enhanced_{image_name}", output)
-
 @st.cache_data(show_spinner=False)
 def download_success():
     st.success('✅ Download Successful !!')
