@@ -1,4 +1,4 @@
-# ✨ Low Light Image Enhancer 🖼 [![Project Status: Active](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
+# Digital Image Processing [![Project Status: Active](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 
 A web application built with Streamlit for processing and enhancing low-quality images. The application consists of two modules:
 
