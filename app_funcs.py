@@ -23,7 +23,6 @@ def instantiate_model():
 
     return model
 
-
 @st.cache_data(show_spinner=False)
 def enhance_image(uploaded_image, downloaded_image):
     model = instantiate_model()
@@ -58,7 +57,6 @@ def super_resolution(uploaded_image, types, output_dir="downloads"):
                              hf_model=False, device=device, output_dir=output_dir)
         rst_image = model.predict(img_path=uploaded_image)
         return rst_image
-
 
 @st.cache_data(show_spinner=False)
 def sr_real_esrgan(scale, input_path, types, face_enhance, output_path="downloads"):
@@ -98,21 +96,22 @@ def sr_real_esrgan(scale, input_path, types, face_enhance, output_path="download
     else:   
         output, _ = enhancer.enhance(img, outscale=4)
         cv2.imwrite(f"{output_path}/enhanced_{image_name}", output)
-
     
-
 @st.cache_data(show_spinner=False)
+
 def imread(img_path):
   img = cv2.imread(img_path)
   img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
   return img
 
 @st.cache_data(show_spinner=False)
+
 def img2tensor(img, bgr2rgb=False, float32=True):
     img = img.astype(np.float32) / 255.
     return _img2tensor(img, bgr2rgb=bgr2rgb, float32=float32)
 
 @st.cache_data(show_spinner=False)
+
 def NAFNetBlur(uploaded_image, output_path="downloads"):
     opt_path = 'options/test/REDS/NAFNet-width64.yml'
     opt = parse(opt_path, is_train=False)
@@ -136,6 +135,7 @@ def NAFNetBlur(uploaded_image, output_path="downloads"):
     cv2.imwrite(f"{output_path}/enhanced_{image_name}", output)
 
 @st.cache_data(show_spinner=False)
+
 def NAFNetNoise(uploaded_image, output_path="downloads"):
     opt_path = 'options/test/SIDD/NAFNet-width64.yml'
     opt = parse(opt_path, is_train=False)
@@ -158,5 +158,6 @@ def NAFNetNoise(uploaded_image, output_path="downloads"):
     output = tensor2img([visuals['result']])
     cv2.imwrite(f"{output_path}/enhanced_{image_name}", output)
 @st.cache_data(show_spinner=False)
+
 def download_success():
     st.success('✅ Download Successful !!')
